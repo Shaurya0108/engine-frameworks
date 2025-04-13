@@ -1,5 +1,6 @@
 import logging
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import time
 
@@ -16,6 +17,14 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 app = FastAPI(title="Basic API", description="A simple API with logging")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(router)
 
