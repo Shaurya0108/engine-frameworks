@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import './App.css';
+import { EngineTemplateRequest } from './types';
 
 function App() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EngineTemplateRequest>({
     engine_name: '',
     version: '',
     author: '',
@@ -11,19 +12,21 @@ function App() {
     framework: 'unity'
   });
   
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string>('');
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -63,7 +66,7 @@ function App() {
       
       setSuccessMessage('Engine template generated successfully!');
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -137,7 +140,7 @@ function App() {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="An awesome 3D game engine"
-                rows="3"
+                rows={3}
               ></textarea>
             </div>
             
